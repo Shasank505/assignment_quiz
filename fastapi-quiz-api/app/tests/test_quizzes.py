@@ -4,8 +4,17 @@ from app.db.session import get_db
 from app.db.models.quiz import Quiz
 from app.db.models.user import User
 from sqlalchemy.orm import Session
+import pytest
 
 client = TestClient(app)
+
+@pytest.fixture(scope="module")
+def db():
+    db = next(get_db())
+    try:
+        yield db
+    finally:
+        db.close()
 
 def test_create_quiz(db: Session):
     response = client.post("/quizzes/", json={"title": "Sample Quiz", "description": "This is a sample quiz."})
